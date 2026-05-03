@@ -1,4 +1,7 @@
 ---
+title: Git 命令速查
+description: 涵盖日常开发中最常用的 Git 命令，包括基础配置、分支操作、合并回退、远程同步等核心指令
+pubDate: 2026-05-03
 type: reference
 domain: git
 status: draft
