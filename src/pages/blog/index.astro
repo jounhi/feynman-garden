@@ -108,11 +108,12 @@ const categories = [...grouped.entries()].sort(
 	}
 	.post-grid li * { text-decoration: none; transition: 0.2s ease; }
 	.post-grid li img { margin-bottom: 0; border-radius: 0; }
-	.post-grid li a { display: block; padding: 0 1.25em 1.25em; }
-	.post-grid li a:has(img) { padding: 0 0 1.25em; }
-	.post-grid li a:has(img) .title,
-	.post-grid li a:has(img) .date { padding: 0 1.25em; }
-	.title { margin: 0; color: rgb(var(--black)); line-height: 1; font-size: 1.25em; }
+		.post-grid li a { display: block; padding: 1.25em; }
+		.post-grid li a:has(img) { padding: 0 0 1.25em; }
+		.post-grid li a:has(img) .title,
+		.post-grid li a:has(img) .date { padding: 0 1.25em; }
+		.post-grid li a:has(img) .title { padding-top: 1.25em; }
+		.title { margin: 0; color: rgb(var(--black)); line-height: 1; font-size: 1.25em; }
 	.date { margin: 0.5em 0 0; color: var(--color-text-tertiary); font-size: 0.9em; }
 	.post-grid li a:hover h4 { color: var(--color-accent); }
 
