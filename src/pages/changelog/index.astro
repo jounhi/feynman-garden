@@ -1,10 +1,17 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 
-const entries = (await getCollection('changelog')).sort(
+const rawEntries = (await getCollection('changelog')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const entries = await Promise.all(
+  rawEntries.map(async (entry) => ({
+    data: entry.data,
+    Content: (await render(entry)).Content,
+  })),
 );
 ---
 
@@ -19,7 +26,9 @@ const entries = (await getCollection('changelog')).sort(
               <span class="tag">{cat}</span>
             ))}
           </header>
-          <div class="content" set:html={entry.body} />
+          <div class="content">
+            <entry.Content />
+          </div>
         </article>
       ))
     }
