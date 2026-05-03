@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+const entries = (await getCollection('changelog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<PageLayout title="更新日志" description="费曼花园的每一次改动记录">
+  <main>
+    {
+      entries.map((entry) => (
+        <article class="changelog-entry">
+          <header>
+            <FormattedDate date={entry.data.date} />
+            {entry.data.categories.map((cat: string) => (
+              <span class="tag">{cat}</span>
+            ))}
+          </header>
+          <div class="content" set:html={entry.body} />
+        </article>
+      ))
+    }
+  </main>
+</PageLayout>
+
+<style>
+  main { max-width: 800px; margin: 0 auto; padding: 2rem 1em; }
+  .changelog-entry {
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .changelog-entry header {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-card-border);
+    box-shadow: none;
+    background: none;
+  }
+  .tag {
+    font-size: 0.8em;
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
+    padding: 0.15em 0.5em;
+    border-radius: 99px;
+  }
+  .content :global(h1) { font-size: 1.4em; margin-top: 0; }
+  .content :global(h2) { font-size: 1.1em; }
+</style>

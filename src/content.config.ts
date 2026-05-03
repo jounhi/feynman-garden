@@ -28,4 +28,13 @@ const profile = defineCollection({
 		}),
 });
 
-export const collections = { blog, profile };
+const changelog = defineCollection({
+	loader: glob({ base: './src/content/changelog', pattern: '**/*.md' }),
+	schema: z.object({
+		title: z.string().optional(),
+		date: z.coerce.date(),
+		categories: z.array(z.string()).default([]),
+	}),
+});
+
+export const collections = { blog, profile, changelog };
