@@ -1,8 +1,6 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
+import PageLayout from '../layouts/PageLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
 import { getCollection } from 'astro:content';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
@@ -11,82 +9,90 @@ const posts = (await getCollection('blog'))
 	.slice(0, 3);
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section class="hero">
-				<h1>{SITE_TITLE}</h1>
-				<p class="tagline">{SITE_DESCRIPTION}</p>
-				<p class="intro">
-					用文字记录学习路上的思考与收获，把复杂的概念拆解成可以理解的小块。
-					这里是我的数字花园，欢迎常来逛逛。
-				</p>
-			</section>
+<PageLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+	<section class="hero">
+		<h1>{SITE_TITLE}</h1>
+		<p class="tagline">{SITE_DESCRIPTION}</p>
+		<div class="divider"></div>
+		<p class="intro">
+			用文字记录学习路上的思考与收获，把复杂的概念拆解成可以理解的小块。
+			这里是我的数字花园，欢迎常来逛逛。
+		</p>
+	</section>
 
-			<section class="recent-posts">
-				<h2>最近文章</h2>
-				{posts.length > 0 ? (
-					<div class="post-list">
-						{posts.map((post) => (
-							<article class="post-card">
-								<a href={`/blog/${post.id}/`}>
-									<h3>{post.data.title}</h3>
-									<p class="post-description">{post.data.description}</p>
-									<p class="post-date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</article>
-						))}
-					</div>
-				) : (
-					<p class="empty-state">还没有文章，敬请期待。</p>
-				)}
-				<a href="/blog" class="view-all">查看全部 &rarr;</a>
-			</section>
+	<section class="recent-posts">
+		<h2>最近文章</h2>
+		{posts.length > 0 ? (
+			<div class="post-list">
+				{posts.map((post, i) => (
+					<article class="post-card" style={`animation-delay: ${i * 0.1}s`}>
+						<a href={`/blog/${post.id}/`}>
+							<h3>{post.data.title}</h3>
+							<p class="post-description">{post.data.description}</p>
+							<p class="post-date">
+								<FormattedDate date={post.data.pubDate} />
+							</p>
+						</a>
+					</article>
+				))}
+			</div>
+		) : (
+			<p class="empty-state">还没有文章，敬请期待。</p>
+		)}
+		<a href="/blog" class="view-all">查看全部 &rarr;</a>
+	</section>
 
-			<section class="about">
-				<h2>关于我</h2>
-				<p>
-					一名热爱学习的开发者，对计算机科学、物理和数学充满好奇。
-					相信费曼所说的"我不能创造的，我就没有理解"，通过写作来加深理解。
-				</p>
-				<a href="/about" class="about-link">了解更多 &rarr;</a>
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+	<section class="about">
+		<h2>关于我</h2>
+		<p>
+			一名热爱学习的开发者，对计算机科学、物理和数学充满好奇。
+			相信费曼所说的"我不能创造的，我就没有理解"，通过写作来加深理解。
+		</p>
+		<a href="/about" class="about-link">了解更多 &rarr;</a>
+	</section>
+</PageLayout>
+
 <style>
 	.hero {
 		text-align: center;
-		padding: 4em 0 3em;
+		padding: 5em 0 4em;
+		position: relative;
+	}
+	.hero::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
+		background-size: 24px 24px;
+		opacity: 0.4;
+		pointer-events: none;
 	}
 	.hero h1 {
 		font-size: 3.052em;
 		margin: 0 0 0.25em;
 		line-height: 1.1;
+		position: relative;
 	}
 	.tagline {
 		font-size: 1.25em;
-		color: rgb(var(--gray));
-		margin: 0 0 1.5em;
+		color: var(--color-text-secondary);
+		margin: 0 0 1em;
+	}
+	.divider {
+		width: 60px;
+		height: 3px;
+		background: var(--color-accent);
+		border-radius: 2px;
+		margin: 0 auto 1.5em;
 	}
 	.intro {
 		max-width: 560px;
 		margin: 0 auto;
 		font-size: 1.05em;
 		line-height: 1.7;
-		color: rgb(var(--gray-dark));
+		color: var(--color-text-secondary);
 	}
-	section:not(.hero) {
-		margin-top: 3em;
-	}
+	section:not(.hero) { margin-top: 3em; }
 	section h2 {
 		font-size: 1.563em;
 		margin: 0 0 1em;
@@ -100,7 +106,7 @@ const posts = (await getCollection('blog'))
 		left: 0;
 		width: 100%;
 		height: 3px;
-		background: var(--accent);
+		background: var(--color-accent);
 		border-radius: 2px;
 	}
 	.post-list {
@@ -109,13 +115,16 @@ const posts = (await getCollection('blog'))
 		gap: 1em;
 	}
 	.post-card {
-		border: 1px solid rgb(var(--gray-light));
-		border-radius: 12px;
-		transition: box-shadow 0.2s ease, transform 0.2s ease;
+		background: var(--color-card-bg);
+		border: 1px solid var(--color-card-border);
+		border-radius: var(--radius-md);
+		transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+		animation: card-enter 0.5s ease both;
 	}
 	.post-card:hover {
 		box-shadow: var(--box-shadow);
 		transform: translateY(-2px);
+		border-left: 3px solid var(--color-accent);
 	}
 	.post-card a {
 		display: block;
@@ -123,50 +132,33 @@ const posts = (await getCollection('blog'))
 		text-decoration: none;
 		color: inherit;
 	}
-	.post-card h3 {
-		font-size: 1.25em;
-		margin: 0 0 0.4em;
-		color: rgb(var(--black));
-	}
+	.post-card h3 { font-size: 1.25em; margin: 0 0 0.4em; color: rgb(var(--black)); }
 	.post-description {
 		margin: 0 0 0.5em;
-		color: rgb(var(--gray));
+		color: var(--color-text-secondary);
 		font-size: 0.95em;
 		line-height: 1.5;
 	}
-	.post-date {
-		margin: 0;
-		font-size: 0.85em;
-		color: rgb(var(--gray));
-	}
+	.post-date { margin: 0; font-size: 0.85em; color: var(--color-text-tertiary); }
 	.empty-state {
-		color: rgb(var(--gray));
+		color: var(--color-text-tertiary);
 		font-style: italic;
 		padding: 2em;
 		text-align: center;
-		border: 1px dashed rgb(var(--gray-light));
-		border-radius: 12px;
+		border: 1px dashed var(--color-border-light);
+		border-radius: var(--radius-md);
 	}
-	.view-all {
-		display: inline-block;
-		margin-top: 1.25em;
-		font-weight: 600;
+	.view-all { display: inline-block; margin-top: 1.25em; font-weight: 600; }
+	.about p { line-height: 1.7; color: var(--color-text-secondary); }
+	.about-link { display: inline-block; margin-top: 0.5em; font-weight: 600; }
+
+	@keyframes card-enter {
+		from { opacity: 0; transform: translateY(20px); }
+		to { opacity: 1; transform: translateY(0); }
 	}
-	.about p {
-		line-height: 1.7;
-		color: rgb(var(--gray-dark));
-	}
-	.about-link {
-		display: inline-block;
-		margin-top: 0.5em;
-		font-weight: 600;
-	}
+
 	@media (max-width: 720px) {
-		.hero {
-			padding: 2.5em 0 2em;
-		}
-		.hero h1 {
-			font-size: 2.441em;
-		}
+		.hero { padding: 2.5em 0 2em; }
+		.hero h1 { font-size: 2.441em; }
 	}
 </style>

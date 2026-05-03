@@ -5,13 +5,14 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import ProfilePanel from '../components/ProfilePanel.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
-<html lang="en">
+<html lang="zh-CN">
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
@@ -20,21 +21,19 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				max-width: 100%;
 				margin: 0;
 			}
-			.hero-image {
-				width: 100%;
-			}
+			.hero-image { width: 100%; }
 			.hero-image img {
 				display: block;
 				margin: 0 auto;
-				border-radius: 12px;
+				border-radius: var(--radius-md);
 				box-shadow: var(--box-shadow);
 			}
 			.prose {
-				width: 720px;
+				width: var(--content-width);
 				max-width: calc(100% - 2em);
 				margin: auto;
 				padding: 1em;
-				color: rgb(var(--gray-dark));
+				color: var(--color-text-secondary);
 			}
 			.title {
 				margin-bottom: 1em;
@@ -42,16 +41,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				text-align: center;
 				line-height: 1;
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
+			.title h1 { margin: 0 0 0.5em 0; }
+			.date { margin-bottom: 0.5em; color: var(--color-text-tertiary); }
+			.last-updated-on { font-style: italic; }
 		</style>
 	</head>
 
@@ -82,5 +74,31 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			</article>
 		</main>
 		<Footer />
+		<ProfilePanel />
+		<script is:inline>
+			(function(){
+				var btn = document.getElementById('theme-toggle');
+				if (btn) {
+					btn.addEventListener('click', function(){
+						var el = document.documentElement;
+						var curr = el.getAttribute('data-theme');
+						var next = curr === 'dark' ? 'light' : 'dark';
+						el.setAttribute('data-theme', next);
+						localStorage.setItem('theme', next);
+					});
+				}
+				var avatarBtn = document.getElementById('avatar-btn');
+				var panelClose = document.getElementById('panel-close');
+				var backdrop = document.getElementById('panel-backdrop');
+				function openPanel() { document.body.setAttribute('data-panel-open', ''); }
+				function closePanel() { document.body.removeAttribute('data-panel-open'); }
+				if (avatarBtn) avatarBtn.addEventListener('click', openPanel);
+				if (panelClose) panelClose.addEventListener('click', closePanel);
+				if (backdrop) backdrop.addEventListener('click', closePanel);
+				document.addEventListener('keydown', function(e){
+					if (e.key === 'Escape') closePanel();
+				});
+			})();
+		</script>
 	</body>
 </html>

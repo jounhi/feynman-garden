@@ -1,6 +1,7 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+import ProfileAvatar from './ProfileAvatar.astro';
 ---
 
 <header>
@@ -11,7 +12,16 @@ import HeaderLink from './HeaderLink.astro';
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
-		<div class="social-links">
+		<div class="nav-actions">
+				<ProfileAvatar />
+			<button id="theme-toggle" class="theme-toggle" aria-label="切换主题" type="button">
+				<svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+				</svg>
+				<svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+				</svg>
+			</button>
 			<a href="https://github.com/jounhi" target="_blank">
 				<span class="sr-only">GitHub</span>
 				<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"
@@ -28,7 +38,7 @@ import HeaderLink from './HeaderLink.astro';
 	header {
 		margin: 0;
 		padding: 0 1em;
-		background: white;
+		background: var(--color-header-bg);
 		box-shadow: 0 2px 8px rgba(var(--black), 5%);
 	}
 	h2 {
@@ -55,12 +65,34 @@ import HeaderLink from './HeaderLink.astro';
 		text-decoration: none;
 		border-bottom-color: var(--accent);
 	}
-	.social-links,
-	.social-links a {
+	.nav-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+	}
+	.nav-actions a {
 		display: flex;
 	}
+	.theme-toggle {
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0.5em;
+		color: rgb(var(--black));
+		display: flex;
+		align-items: center;
+		border-radius: var(--radius-sm);
+		transition: background var(--transition-fast);
+	}
+	.theme-toggle:hover {
+		background: var(--color-bg-secondary);
+	}
+	.sun-icon { display: none; }
+	.moon-icon { display: block; }
+	[data-theme="dark"] .sun-icon { display: block; }
+	[data-theme="dark"] .moon-icon { display: none; }
 	@media (max-width: 720px) {
-		.social-links {
+		.nav-actions .theme-toggle + a {
 			display: none;
 		}
 	}

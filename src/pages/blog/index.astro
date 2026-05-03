@@ -1,114 +1,118 @@
 ---
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
-import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+function getCategory(id: string): string {
+	const parts = id.split('/');
+	return parts.length > 1 ? parts[0] : '未分类';
+}
+
+const grouped = new Map<string, typeof posts>();
+for (const post of posts) {
+	const cat = getCategory(post.id);
+	if (!grouped.has(cat)) grouped.set(cat, []);
+	grouped.get(cat)!.push(post);
+}
+
+const categories = [...grouped.entries()].sort(
+	(a, b) => b[1][0].data.pubDate.valueOf() - a[1][0].data.pubDate.valueOf(),
+);
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
+<PageLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+	{
+		categories.map(([category, categoryPosts]) => (
+			<section class="category">
+				<h2>
+					{category}
+					<span class="post-count">{categoryPosts.length}</span>
+				</h2>
+				<ul class="post-grid">
+					{categoryPosts.map((post, i) => (
+						<li style={`animation-delay: ${i * 0.08}s`}>
+							<a href={`/blog/${post.id}/`}>
+								{post.data.heroImage && (
+									<Image width={720} height={360} src={post.data.heroImage} alt="" />
+								)}
+								<h4 class="title">{post.data.title}</h4>
+								<p class="date">
+									<FormattedDate date={post.data.pubDate} />
+								</p>
+							</a>
+						</li>
+					))}
 				</ul>
 			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+		))
+	}
+</PageLayout>
+
+<style>
+	.category { margin-bottom: 3rem; }
+	.category h2 {
+		margin-bottom: 1rem;
+		font-size: 1.563em;
+		border-bottom: none;
+		padding-left: 0.75em;
+		border-left: 3px solid var(--color-accent);
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+	}
+	.post-count {
+		font-size: 0.65em;
+		background: var(--color-accent-subtle);
+		color: var(--color-accent);
+		padding: 0.15em 0.6em;
+		border-radius: 99px;
+		font-weight: 600;
+	}
+	.post-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+	}
+	.post-grid li {
+		width: calc(50% - 1rem);
+		background: var(--color-card-bg);
+		border: 1px solid var(--color-card-border);
+		border-radius: var(--radius-md);
+		transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+		animation: card-enter 0.5s ease both;
+		overflow: hidden;
+	}
+	.post-grid li:hover {
+		box-shadow: var(--box-shadow);
+		transform: translateY(-2px);
+		border-left: 3px solid var(--color-accent);
+	}
+	.post-grid li * { text-decoration: none; transition: 0.2s ease; }
+	.post-grid li img { margin-bottom: 0; border-radius: 0; }
+	.post-grid li a { display: block; padding: 0 1.25em 1.25em; }
+	.post-grid li a:has(img) { padding: 0 0 1.25em; }
+	.post-grid li a:has(img) .title,
+	.post-grid li a:has(img) .date { padding: 0 1.25em; }
+	.title { margin: 0; color: rgb(var(--black)); line-height: 1; font-size: 1.25em; }
+	.date { margin: 0.5em 0 0; color: var(--color-text-tertiary); font-size: 0.9em; }
+	.post-grid li a:hover h4 { color: var(--color-accent); }
+
+	@keyframes card-enter {
+		from { opacity: 0; transform: translateY(16px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	@media (max-width: 720px) {
+		.post-grid { gap: 0.75em; }
+		.post-grid li { width: 100%; text-align: center; }
+	}
+</style>
