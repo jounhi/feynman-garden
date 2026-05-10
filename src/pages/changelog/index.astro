@@ -22,9 +22,11 @@ const entries = await Promise.all(
         <article class="changelog-entry">
           <header>
             <FormattedDate date={entry.data.date} />
-            {entry.data.categories.map((cat: string) => (
-              <span class="tag">{cat}</span>
-            ))}
+            <div class="tags">
+              {entry.data.categories.map((cat: string) => (
+                <span class="tag">{cat}</span>
+              ))}
+            </div>
           </header>
           <div class="content">
             <entry.Content />
@@ -47,20 +49,42 @@ const entries = await Promise.all(
   .changelog-entry header {
     display: flex;
     align-items: center;
-    gap: 0.5em;
+    gap: 0.75em;
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--color-card-border);
     box-shadow: none;
     background: none;
   }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4em; }
   .tag {
     font-size: 0.8em;
     background: var(--color-accent-subtle);
     color: var(--color-accent);
     padding: 0.15em 0.5em;
     border-radius: 99px;
+    white-space: nowrap;
   }
   .content :global(h1) { font-size: 1.4em; margin-top: 0; }
   .content :global(h2) { font-size: 1.1em; }
+  .content :global(h3) { font-size: 1em; }
+
+  @media (max-width: 720px) {
+    main { padding: 1rem 0.75em; }
+    .changelog-entry {
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .changelog-entry header {
+      flex-wrap: wrap;
+      gap: 0.5em;
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+    }
+    .tags { gap: 0.3em; }
+    .tag { font-size: 0.7em; padding: 0.1em 0.4em; }
+    .content :global(h1) { font-size: 1.15em; }
+    .content :global(h2) { font-size: 1.05em; }
+    .content :global(h3) { font-size: 0.95em; }
+  }
 </style>
