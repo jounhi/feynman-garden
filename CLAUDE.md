@@ -59,6 +59,18 @@ heroImage: ./image.jpg    # optional, path relative to post file
 
 The post automatically appears on `/blog` and gets its own page at `/blog/:slug/`.
 
+### Changelog workflow
+
+**Every git commit + push MUST update the changelog.** After committing and pushing:
+
+1. Check if `src/content/changelog/<YYYY-MM-DD>.md` exists for today
+2. If exists, append the new changes to the appropriate sections (`## 新增`, `## 修改`, `## 删除`)
+3. If not, create a new file with frontmatter `title`, `date` (YYYY-MM-DD), `categories`, and body sections
+4. Reference files changed and a short description of each change
+5. Stage and commit the changelog update (use a separate commit or squash into the original)
+
+Changelog entries are rendered at `/changelog` via the `changelog` content collection.
+
 ### Deployment
 
 Git push triggers: Gitee → GitHub mirror → Vercel auto-deploy. No manual steps needed after merge.
