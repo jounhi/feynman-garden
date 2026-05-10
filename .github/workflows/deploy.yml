@@ -3,7 +3,7 @@ name: Deploy to Aliyun Server
 on:
   push:
     branches:
-      - main  # 如果你的默认分支是 master，请把这里改成 master
+      - main
 
 jobs:
   deploy:
@@ -16,14 +16,26 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
             cd /var/www/feynman-garden
-            
-            # 放弃服务器端的所有本地修改，强行重置为线上最新版
-            git fetch --all
+
+            echo "=== Before fetch ==="
+            git log --oneline -1
+
+            echo "=== Fetching from remote ==="
+            git fetch origin main
             git reset --hard origin/main
-            
+
+            echo "=== After reset ==="
+            git log --oneline -1
+
+            echo "=== Installing dependencies ==="
             npm install
+
+            echo "=== Building ==="
             npm run build
-            
-            # 移交权限给 Nginx
+
+            echo "=== Setting permissions ==="
             chown -R www-data:www-data /var/www/feynman-garden/dist
+
+            echo "=== Deploy complete ==="
