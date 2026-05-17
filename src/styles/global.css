@@ -147,8 +147,86 @@ hr { border: none; border-top: 1px solid var(--color-border-light); }
 }
 
 @media (max-width: 720px) {
-	body { font-size: 18px; }
+	body { font-size: 17px; line-height: 1.65; }
 	main { padding: 1em; }
+	h1 { font-size: 1.8em; }
+	h2 { font-size: 1.4em; }
+	h3 { font-size: 1.2em; }
+	h4 { font-size: 1.05em; }
+	blockquote { font-size: 1em; padding: 0 0 0 14px; }
+	pre { padding: 0.75em; font-size: 0.85em; border-radius: var(--radius-sm); }
+	img { border-radius: var(--radius-sm); }
+}
+
+/* code block wrapper (added by JS) */
+.code-block {
+	position: relative;
+	margin: 1.5em 0;
+	border: 1px solid var(--color-border-light);
+	border-radius: var(--radius-md);
+	background: var(--color-card-bg);
+}
+.code-block pre {
+	margin: 0;
+	padding: 1.25em;
+	border-radius: 0;
+	background: transparent;
+	overflow-x: auto;
+	white-space: pre;
+	tab-size: 4;
+}
+.code-block pre code {
+	background: transparent;
+	padding: 0;
+	font-size: 0.875em;
+	line-height: 1.6;
+	white-space: pre;
+	display: block;
+	width: fit-content;
+	min-width: 100%;
+}
+
+/* copy button */
+.copy-btn {
+	position: absolute;
+	top: 0.5em;
+	right: 0.5em;
+	z-index: 1;
+	padding: 0.3em 0.7em;
+	font-size: 0.75em;
+	font-family: inherit;
+	color: var(--color-text-tertiary);
+	background: var(--color-bg-secondary);
+	border: 1px solid var(--color-border-light);
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity var(--transition-fast), color var(--transition-fast);
+}
+.code-block:hover .copy-btn,
+.code-block:focus-within .copy-btn {
+	opacity: 1;
+}
+.copy-btn:hover {
+	color: var(--color-accent);
+	border-color: var(--color-accent);
+}
+
+@media (max-width: 720px) {
+	.code-block pre {
+		padding: 0.75em;
+		font-size: inherit;
+	}
+	.code-block pre code {
+		font-size: 0.8em;
+	}
+	.copy-btn {
+		opacity: 1;
+		top: 0.3em;
+		right: 0.3em;
+		padding: 0.25em 0.5em;
+		font-size: 0.7em;
+	}
 }
 
 .sr-only {

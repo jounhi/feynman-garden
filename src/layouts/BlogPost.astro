@@ -17,9 +17,10 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
+				width: 100%;
+				max-width: var(--content-width);
+				margin: 0 auto;
+				padding: 2em 1em;
 			}
 			.hero-image { width: 100%; }
 			.hero-image img {
@@ -29,10 +30,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				box-shadow: var(--box-shadow);
 			}
 			.prose {
-				width: var(--content-width);
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
+				width: 100%;
 				color: var(--color-text-secondary);
 			}
 			.title {
@@ -44,6 +42,21 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.title h1 { margin: 0 0 0.5em 0; }
 			.date { margin-bottom: 0.5em; color: var(--color-text-tertiary); }
 			.last-updated-on { font-style: italic; }
+
+			@media (max-width: 720px) {
+				main { padding: 1.5em 0.75em; }
+				.title { padding: 0.5em 0; margin-bottom: 0.5em; }
+				.title h1 { font-size: 1.6em; }
+				.prose :global(h2) { font-size: 1.3em; }
+				.prose :global(h3) { font-size: 1.15em; }
+				.prose :global(h4) { font-size: 1.05em; }
+				.prose :global(p) { margin-bottom: 0.8em; }
+				.prose :global(blockquote) { font-size: 1em; padding: 0 0 0 14px; }
+				.prose :global(pre) { padding: 0.75em; font-size: 0.85em; border-radius: var(--radius-sm); }
+				.prose :global(img) { border-radius: var(--radius-sm); }
+				.prose :global(ul), .prose :global(ol) { padding-left: 1.25em; }
+				.prose :global(li) { margin-bottom: 0.3em; }
+			}
 		</style>
 	</head>
 
@@ -97,6 +110,30 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				if (backdrop) backdrop.addEventListener('click', closePanel);
 				document.addEventListener('keydown', function(e){
 					if (e.key === 'Escape') closePanel();
+				});
+
+				// code block copy buttons
+				document.querySelectorAll('pre').forEach(function(pre) {
+					if (pre.parentNode.classList.contains('code-block')) return;
+					var wrapper = document.createElement('div');
+					wrapper.className = 'code-block';
+					pre.parentNode.insertBefore(wrapper, pre);
+					wrapper.appendChild(pre);
+
+					var btn = document.createElement('button');
+					btn.className = 'copy-btn';
+					btn.textContent = '复制';
+					btn.addEventListener('click', function() {
+						var code = pre.querySelector('code') || pre;
+						navigator.clipboard.writeText(code.textContent || '').then(function() {
+							btn.textContent = '已复制!';
+							setTimeout(function() { btn.textContent = '复制'; }, 2000);
+						}).catch(function() {
+							btn.textContent = '失败';
+							setTimeout(function() { btn.textContent = '复制'; }, 2000);
+						});
+					});
+					wrapper.appendChild(btn);
 				});
 			})();
 		</script>
