@@ -3,9 +3,11 @@ import { getCollection, render } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 
-const rawEntries = (await getCollection('changelog')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+const rawEntries = (await getCollection('blog'))
+  .filter((entry) => entry.id.startsWith('changelog/'))
+  .sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
 
 const entries = await Promise.all(
   rawEntries.map(async (entry) => ({
@@ -21,7 +23,7 @@ const entries = await Promise.all(
       entries.map((entry) => (
         <article class="changelog-entry">
           <header>
-            <FormattedDate date={entry.data.date} />
+            <FormattedDate date={entry.data.pubDate} />
             <div class="tags">
               {entry.data.categories.map((cat: string) => (
                 <span class="tag">{cat}</span>

@@ -5,9 +5,11 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const posts = (await getCollection('blog'))
+		.filter((p) => !p.id.startsWith('changelog/') && !p.id.startsWith('关于/'))
+		.sort(
+			(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+		);
 
 function getCategory(id: string): string {
 	const parts = id.split('/');
